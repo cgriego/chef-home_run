@@ -38,3 +38,17 @@ node['home_run']['rvm_rubies'].each do |ruby_version|
     action :nothing
   end
 end
+
+node['home_run']['uninstall_rvm_rubies'].each do |ruby_version|
+  rvm_shell "uninstall home_run #{ruby_version}" do
+    code "home_run --uninstall"
+    ruby_string "#{ruby_version}@global"
+    only_if { File.exist? File.join(node['rvm']['root_path'], "gems", "#{ruby_version}@global", "bin", "home_run") }
+  end
+
+  rvm_gem "home_run #{ruby_version}" do
+    package_name "home_run"
+    ruby_string "#{ruby_version}@global"
+    action :remove
+  end
+end
